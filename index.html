@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Countdown Timer</title>
+  <style>
+    body {
+  font-family: Arial, sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  margin: 0;
+}
+
+.timer {
+  text-align: center;
+}
+
+#timerDisplay {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+button {
+  font-size: 16px;
+  margin: 5px;
+}
+  </style>
+</head>
+<body>
+    <div class="timer">
+        <h1>Countdown Timer</h1>
+        <div id="timerDisplay">00:00:00</div>
+        <div id="finishTime"></div>
+        <div>
+            <button onclick="startTimer()">スタート</button>
+            <button onclick="stopTimer()">ストップ</button>
+            <button onclick="resetTimer()">リセット</button>
+            <button onclick="repeatTimer()">繰り返し</button>
+        </div>
+        <div>
+          <label for="initialSeconds">初回の秒数: </label>
+          <input type="number" id="initialSeconds" value="" min="1">
+          <button onclick="setInitialTime()">セット</button>
+        </div>
+        <div>
+            <label for="maxSeconds">最大秒数: </label>
+            <input type="number" id="maxSeconds" value="7200" min="1">
+        </div>
+
+    </div>
+
+  <script>
+    let timer;
+    let initialSeconds = 2;
+    let currentSeconds = initialSeconds;
+    let isRunning = false;
+
+    document.getElementById("initialSeconds").value = initialSeconds;
+
+    function setInitialTime() {
+      initialSeconds = parseInt(document.getElementById('initialSeconds').value, 10);
+      currentSeconds = initialSeconds;
+      updateDisplay();
+    }
+
+    function startTimer() {
+      if (!isRunning) {
+        isRunning = true;
+        timer = setInterval(updateTimer, 1000);
+      }
+    }
+
+    function stopTimer() {
+      clearInterval(timer);
+      isRunning = false;
+    }
+
+    function resetTimer() {
+      stopTimer();
+      currentSeconds = initialSeconds;
+      updateDisplay();
+    }
+
+    function repeatTimer() {
+      stopTimer();
+      const maxSeconds = parseInt(document.getElementById("maxSeconds").value);
+      if(initialSeconds * 2 > maxSeconds){
+        initialSeconds = maxSeconds;
+
+      }else{
+        
+      }
+      initialSeconds *= 2;
+      currentSeconds = initialSeconds;
+      updateDisplay();
+      startTimer();
+    }
+
+    function updateTimer() {
+      if (currentSeconds > 0) {
+        currentSeconds--;
+        updateDisplay();
+      } else {
+        stopTimer();
+      }
+    }
+
+    function updateDisplay() {
+        const days = Math.floor(currentSeconds / 3600 / 24);
+      const hours = Math.floor(currentSeconds / 3600);
+      const minutes = Math.floor((currentSeconds % 3600) / 60);
+      const seconds = currentSeconds % 60;
+
+      const formattedTime = `${formatTime(days)}:${formatTime(hours)}:${formatTime(minutes)}:${formatTime(seconds)}`;
+      let now = new Date();
+      const finishDate = new Date(now.getTime() + currentSeconds * 1000);
+      document.getElementById('timerDisplay').textContent = formattedTime;
+      document.getElementById("finishTime").textContent = finishDate.toLocaleDateString("ja-JP", {year: "numeric",month: "2-digit",
+   day: "2-digit"})+ " " + finishDate.toLocaleTimeString();
+    }
+
+    function formatTime(time) {
+      return time < 10 ? `0${time}` : time;
+    }
+
+    // 初回ロード時に初期表示を更新
+    updateDisplay();
+  </script>
+</body>
+</html>
